@@ -14,7 +14,6 @@ class KoreanTextEncoder:
         
         print(f"[Info] Loading OpenCLIP model '{model_name}' on {self.device}...")
         
-        # OpenCLIP 모델 및 토크나이저 초기화
         self.model, _, _ = open_clip.create_model_and_transforms(
             model_name, 
             pretrained=pretrained
@@ -39,20 +38,20 @@ class KoreanTextEncoder:
             text_list = text
             is_single = False
 
-        # 1. 자연어 검색어 토크나이징 (OpenCLIP Tokenizer)
+      
         tokens = self.tokenizer(text_list).to(self.device)
 
-        # 2. OpenCLIP Text Encoder를 통한 512차원 텍스트 임베딩 추출
+    
         with torch.no_grad():
             text_features = self.model.encode_text(tokens)
-            # 코사인 유사도 계산을 위한 L2 Normalization (정규화)
+          
             text_features /= text_features.norm(dim=-1, keepdim=True)
 
-        # 3. CPU 및 Numpy 타입 변환
+       
         vector_array = text_features.cpu().numpy()
 
         if is_single:
-            vector_array = vector_array[0]  # (1, 512) -> (512,)
+            vector_array = vector_array[0]  
 
         if not to_numpy:
             return vector_array.tolist()
@@ -61,7 +60,7 @@ class KoreanTextEncoder:
 
 
 if __name__ == "__main__":
-    # 간단한 작동 및 출력 검증 테스트
+    # 출력 검증 테스트
     print("=== Korean Text Encoder Test ===")
     encoder = KoreanTextEncoder()
     
